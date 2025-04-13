@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc36dbe128d583445be1af842ca5b15a, type: 3}
+  m_Name: FlyingEyeCard
+  m_EditorClassIdentifier: 
+  cardName: Flying Eye
+  cardDescription: 
+  skill: {fileID: 0}
+  charSprite: {fileID: -4795363162621231457, guid: 6d7cd4f7505dc674c891ca8946cfd98b, type: 3}
+  charAnimator: {fileID: 9100000, guid: c9fc4a0789e31ce4b9b813f873a19620, type: 2}
+  prefab: {fileID: 3246869809288323994, guid: 439c5366a7a9abb4caa4eb3c79d9f24c, type: 3}
+  health: 30
+  attack: 10
+  movementRange: 2
+  attackRange: 1
