@@ -17,3 +17,8 @@ Although the present version runs on PC, my goal is to make it playable through 
 
 For now, you can test the multiplayer functionality by building the project through Unity and running it as a standalone application. Additionally, you can play and test the multiplayer features directly from the Unity Editor at the same time. 
 
+<img src="imgs/Screenshot.png" alt="Game Screenshot" width="500"/>
+
+
+
+
