@@ -149,7 +149,7 @@ public class CardInteraction : MonoBehaviour, IDragHandler, IPointerDownHandler,
                 Vector2 targetPos = cell.gridIndex;
 
                 int tempNormalizedPosX;
-                if(gridManager.GetCurrentTeam() == 0)
+                if(GameManager.Instance.CurrentTeam == 0)
                 {
                     tempNormalizedPosX = (int)targetPos.x;  
                 } 
