@@ -160,7 +160,7 @@ public class CardInteraction : MonoBehaviour, IDragHandler, IPointerDownHandler,
 
                 if(tempNormalizedPosX < spawnRange)
                 { 
-                if(gridManager.AddObjectToGrid(GetComponent<CardDisplay>().cardData.GetCardIndex(), targetPos, gridManager.GetCurrentTeam()))
+                if(gridManager.AddObjectToGrid(GetComponent<CardDisplay>().cardData.GetCardIndex(), targetPos, GameManager.Instance.CurrentTeam))
                 {
                     HandManager handManager = FindAnyObjectByType<HandManager>();
                     handManager.RemoveCardFromHand(gameObject);
