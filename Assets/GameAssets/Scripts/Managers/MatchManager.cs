@@ -1,112 +1,90 @@
-using Unity.Networking.Transport; 
 using UnityEngine;
 
 public class MatchManager : MonoBehaviour
 {
-    
+    [SerializeField] private DeckManager deckManager; 
+    [SerializeField] private GridManager gridManager;
+    [SerializeField] private HandManager handManager;
+    [SerializeField] private MatchClient matchClient;
 
-    public DeckManager deckManager; 
-    public GridManager gridManager;
-    public HandManager handManager;
-    public MenuManager menuManager; 
-    private int currentTeam = -1;
     private int manaPerTurn = 3; 
-    private int currentMana = 3;  
-
-
-    private void Awake()
+    private int currentMana = 3;   
+    void Start()
     {
-        //RegisterToEvent(); 
+        RegisterToEvent();
+        
     }
-    
+
     private void RegisterToEvent()
     {
-        NetUtility.C_WELCOME += OnSetCurrentTeamClient; 
-        NetUtility.C_START_GAME += OnGameStartClient;
-        NetUtility.C_CHAR_CREATED += OnEnemyCreatedNewCharClient;
-        NetUtility.C_MAKE_MOVE += OnMakeMoveClient;
-        NetUtility.C_ATTACK += OnAttackClient; 
-        NetUtility.C_TURN_END += OnTurnEndClient; 
-        NetUtility.C_MATCH_END += OnMatchEndClient; 
-        
+        matchClient.OnMatchStart += HandleMatchStartClient;
+        matchClient.OnCharCreate += HandleCharCreateClient;
+        matchClient.OnMove += HandleMakeMoveClient;
+        matchClient.OnAttack += HandleAttackClient; 
+        matchClient.OnTurnEnd += HandleTurnEndClient;
+        matchClient.OnMatchEnd += HandleMatchEndClient;
 
-        NetUtility.S_CHAR_CREATED += OnEnemyCreatedNewCharServer;
-        NetUtility.S_MAKE_MOVE += OnMakeMoveServer;
-        NetUtility.S_ATTACK += OnAttackServer;
-        NetUtility.S_TURN_END += OnTurnEndServer; 
-        NetUtility.S_MATCH_END += OnMatchEndServer;   
-        
-        gridManager.OnAddObjectToGrid += OnObjectAddedToGrid;
-        gridManager.OnMakeMove += OnCharMoved; 
-        gridManager.OnAttack  += OnCharAttack;
+
+        gridManager.OnAddObjectToGrid += HandleObjectAddedToGrid;
+        gridManager.OnMakeMove += HandleMakeMove;
+        gridManager.OnAttack  += HandleCharAttack;
         gridManager.OnMatchEnd += OnMatchEnd;
     }
-    
-    
-    private void OnGameStartClient(NetMessage msg)
+
+    public void HandleMatchStartClient(NetworkMessage msg)
     {
-        SetMana(manaPerTurn); 
-        gridManager.Init(currentTeam);
-        gridManager.SetLocked(true);
-        
-        if(currentTeam == 0)
+        SetMana(manaPerTurn);
+        GameManager.Instance.SetCurrentTeam(msg.currentTeam);
+        gridManager.Init(msg.currentTeam);
+        gridManager.SetLocked(true); 
+
+        if(msg.currentTeam == 0)
         {
             deckManager.Init(5);            
             handManager.SetLockedCardsInHand(false);
             gridManager.SetLocked(false);
-            menuManager.UpdateTurnText("Your Turn");
+            //menuManager.UpdateTurnText("Your Turn");
         }
-        else{
+        else
+        {
             deckManager.Init(4);
             handManager.SetLockedCardsInHand(true);
-            menuManager.UpdateTurnText("Enemy Turn"); 
-        }
-           
-    }
-    private void OnSetCurrentTeamClient(NetMessage msg)
-    {
-        NetWelcome nw = msg as NetWelcome;
-        currentTeam = nw.AssignedTeam;
-    }
-    private void OnEnemyCreatedNewCharClient(NetMessage msg)
-    {
-        NetCharCreated nw = msg as NetCharCreated;
-        if(nw.currentTeam != currentTeam)
-        {
-            gridManager.AddObjectToGrid(nw.cardIndex, nw.gridPosition, nw.currentTeam);
+            //menuManager.UpdateTurnText("Enemy Turn"); 
         }
     }
-    private void OnMakeMoveClient(NetMessage msg)
-     {
-        NetMove nw = msg as NetMove;
-        if(nw.currentTeam != currentTeam)
-        {
-            gridManager.MoveObject(nw.initPoisiton, nw.targetPoisiton);
-        }
-     }
-    private void OnAttackClient(NetMessage msg)
-     {
-        NetAttack nw = msg as NetAttack;
 
-        if(nw.currentTeam != currentTeam)
-        {
-            gridManager.Attack(nw.initPoisiton, nw.targetPoisiton);
-        }
-     }
-    private void OnTurnEndClient(NetMessage msg)
+    
+    public void HandleCharCreateClient(CreateCharMessage msg)
     {
-        NetTurnEnd nw = msg as NetTurnEnd;
-
-        if(nw.currentTeam != currentTeam)
+        if(msg.currentTeam != GameManager.Instance.CurrentTeam)
         {
-            Debug.Log("Ifin içindeyimmmm");
+            gridManager.AddObjectToGrid(msg.cardIndex, new Vector2(msg.posX, msg.posY), msg.currentTeam);
+        }
+    }
+    public void HandleMakeMoveClient(MoveMessage msg)
+    {
+        if(msg.currentTeam != GameManager.Instance.CurrentTeam)
+        {
+            gridManager.MoveObject(new Vector2(msg.initPosX, msg.initPosY), new Vector2(msg.targetPosX, msg.targetPosY));
+        }
+    }
+    public void HandleAttackClient(AttackMessage msg)
+    {
+        if(msg.currentTeam != GameManager.Instance.CurrentTeam)
+        {
+            Debug.Log("Burdayım burda HandleAttackClienyın içinde"); 
+            gridManager.Attack(new Vector2(msg.initPosX, msg.initPosY), new Vector2(msg.targetPosX, msg.targetPosY));
+        }
+    }
+    private void HandleTurnEndClient(TurnEndMessage msg)
+    {
+        if(msg.currentTeam != GameManager.Instance.CurrentTeam)
+        {
             OnPlayerTurnStart();
         }
     }
-    
-    private void OnMatchEndClient(NetMessage msg)
+    private void HandleMatchEndClient(MatchEndMessage msg)
     {
-        NetMatchEnd nw = msg as NetMatchEnd;
         handManager.SetLockedCardsInHand(true);
         gridManager.SetLocked(true);
 
@@ -114,132 +92,75 @@ public class MatchManager : MonoBehaviour
         handManager.Reset();
         deckManager.Reset();
         
-        if(nw.currentTeam != currentTeam)
+        if(msg.currentTeam != GameManager.Instance.CurrentTeam)
         {
-            
-           menuManager.OpenResultMenu("Failed"); 
+           //menuManager.OpenResultMenu("Failed");
+           Debug.Log("Failed"); 
         }
         else
         {
-            menuManager.OpenResultMenu("Victory");
-        }
-        currentTeam = -1; 
-    
+            Debug.Log("Victory");
+            //menuManager.OpenResultMenu("Victory");
+        }    
     }
-    private void OnMakeMoveServer(NetMessage msg, NetworkConnection cnn)
-     {
-        NetMove nw = msg as NetMove;
-        Server.Instance.Brodcast(nw);
-     }
-    private void OnAttackServer(NetMessage msg, NetworkConnection cnn)
-     {
-        NetAttack nw = msg as NetAttack;
-        Server.Instance.Brodcast(nw);
-     }
-    private void OnEnemyCreatedNewCharServer(NetMessage msg, NetworkConnection cnn)
-    {
-        NetCharCreated nw = msg as NetCharCreated;
-        Server.Instance.Brodcast(nw);
-        
-    }
-    private void OnTurnEndServer(NetMessage msg, NetworkConnection cnn)
-    {
-        NetTurnEnd nw = msg as NetTurnEnd;
-        Server.Instance.Brodcast(nw);
-    }
-
-    private void OnMatchEndServer(NetMessage msg, NetworkConnection cnn)
-    {
-        NetMatchEnd nw = msg as NetMatchEnd;
-        Server.Instance.Brodcast(nw);
-    }
-    
-    
-    
-    private void OnObjectAddedToGrid(int currentTeam, int cardIndex, Vector2 gridPoisition)
+    public void HandleObjectAddedToGrid(int currentTeam, int cardIndex, Vector2 gridPoisition)
     {
         UpdateMana(-1); 
-        Debug.Log("Card Index: " + cardIndex);
-        Debug.Log("Card Position: "+ gridPoisition);
+        CreateCharMessage nw = new CreateCharMessage(GameManager.Instance.AuthToken, GameManager.Instance.MatchID, GameManager.Instance.CurrentTeam, cardIndex, (int)gridPoisition.x, (int)gridPoisition.y);
+        matchClient.SendMessageToServer(nw);
+    }
+    public void HandleMakeMove(Vector2 initPos, Vector2 targetPos)
+    {
+        UpdateMana(-1);
+        MoveMessage nw = new MoveMessage(GameManager.Instance.AuthToken, GameManager.Instance.MatchID, GameManager.Instance.CurrentTeam, (int)initPos.x, (int)initPos.y, (int)targetPos.x, (int)targetPos.y);
+        matchClient.SendMessageToServer(nw);
+    }
+    public void HandleCharAttack(Vector2 initPos, Vector2 targetPos)
+    {
+        UpdateMana(-1);
+        AttackMessage msg = new AttackMessage(GameManager.Instance.AuthToken, GameManager.Instance.MatchID, GameManager.Instance.CurrentTeam, (int)initPos.x, (int)initPos.y, (int)targetPos.x, (int)targetPos.y);
+        matchClient.SendMessageToServer(msg);
+    }  
+    public void SetMana(int val)
+    {
+        currentMana = val;
+        //menuManager.UpdateManaText(currentMana, manaPerTurn); 
+    }
+    public void UpdateMana(int deltaMana)
+    {
+        SetMana(currentMana + deltaMana); 
+        //menuManager.UpdateManaText(currentMana, manaPerTurn);
+        if(currentMana <= 0)
+        {
+            OnPlayerTurnEnd(GameManager.Instance.CurrentTeam);
+        }
+    }
 
-        NetCharCreated nw = new NetCharCreated();
-        nw.currentTeam = currentTeam;  
-        nw.cardIndex = cardIndex;
-        nw.gridPosition = gridPoisition;
-        Client.Instance.SendToServer(nw); 
-    }
-    private void OnCharMoved(Vector2 initPos, Vector2 targetPos)
-    {
-        UpdateMana(-1);
-        NetMove nw = new NetMove();
-        nw.currentTeam = currentTeam; 
-        nw.initPoisiton = initPos;
-        nw.targetPoisiton = targetPos;
-        Client.Instance.SendToServer(nw);
-    }
-    private void OnCharAttack(Vector2 initPos, Vector2 targetPos)
-    {
-        UpdateMana(-1);
-        NetAttack nw = new NetAttack();
-        nw.currentTeam = currentTeam; 
-        nw.initPoisiton = initPos;
-        nw.targetPoisiton = targetPos;
-        Client.Instance.SendToServer(nw);
-    }
-    private void OnPlayerTurnEnd(int currentTeam)
+    public void OnPlayerTurnEnd(int team)
     {
         handManager.SetLockedCardsInHand(true);
         gridManager.SetLocked(true); 
         
-        menuManager.UpdateTurnText("Enemy Turn");
+        //menuManager.UpdateTurnText("Enemy Turn");
         
-        NetTurnEnd nw = new NetTurnEnd();
-        nw.currentTeam = currentTeam; 
-        Client.Instance.SendToServer(nw);
-    }
+        TurnEndMessage nw = new TurnEndMessage(GameManager.Instance.AuthToken, GameManager.Instance.MatchID, GameManager.Instance.CurrentTeam);
+        matchClient.SendMessageToServer(nw);
 
+    } 
+    public void OnPlayerTurnStart()
+    {
+        SetMana(manaPerTurn);
+        //menuManager.UpdateTurnText("Your Turn"); 
+        deckManager.DrawCard(handManager); 
+        gridManager.SetLocked(false);
+        handManager.SetLockedCardsInHand(false); 
+    }
     private void OnMatchEnd(int team)
     {
         handManager.SetLockedCardsInHand(true);
         gridManager.SetLocked(true); 
 
-        NetMatchEnd nw = new NetMatchEnd();
-        nw.currentTeam = currentTeam; 
-        Client.Instance.SendToServer(nw);
-
+        MatchEndMessage msg = new MatchEndMessage(GameManager.Instance.AuthToken, GameManager.Instance.MatchID, GameManager.Instance.CurrentTeam);
+        matchClient.SendMessageToServer(msg); 
     }
-
-
-    public void OnPlayerTurnStart()
-    {
-        Debug.Log("OnPlayerStartın içndeyim");
-
-        SetMana(manaPerTurn);
-        menuManager.UpdateTurnText("Your Turn"); 
-        deckManager.DrawCard(handManager); 
-        gridManager.SetLocked(false);
-        handManager.SetLockedCardsInHand(false); 
-    }
-
-    
-    public void UpdateMana(int deltaMana)
-    {
-        
-        currentMana = currentMana + deltaMana; 
-
-        menuManager.UpdateManaText(currentMana, manaPerTurn);
-
-        if(currentMana <= 0)
-        {
-            Debug.Log("mana bitti");
-            OnPlayerTurnEnd(currentTeam);
-        }
-    }
-    public void SetMana(int val)
-    {
-        currentMana = val;
-        menuManager.UpdateManaText(currentMana, manaPerTurn); 
-    }
-
-
 }

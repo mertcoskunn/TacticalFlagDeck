@@ -565,7 +565,7 @@ MonoBehaviour:
   deckManager: {fileID: 1770788079}
   gridManager: {fileID: 1902479919}
   handManager: {fileID: 1414138450}
-  menuManager: {fileID: 1430736899}
+  matchClient: {fileID: 0}
 --- !u!4 &360377982
 Transform:
   m_ObjectHideFlags: 0
@@ -4114,7 +4114,7 @@ PrefabInstance:
     - target: {fileID: 8814293646067686386, guid: 5ba1ed8214d38f343bd49c7e90e25fda, type: 3}
       propertyPath: matchManager
       value: 
-      objectReference: {fileID: 360377983}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

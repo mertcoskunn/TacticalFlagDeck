@@ -3,15 +3,9 @@ using UnityEngine;
 public class MatchMenuManager : MonoBehaviour
 {
     [SerializeField]  private GameObject matchMenuObject;
-    
-
-    [SerializeField]  private MatchMakingNew matchManager;
+    [SerializeField]  private MatchManager matchManager;
     [SerializeField]  private MatchClient matchClient;
 
-
-    
-
-   
 
    public void Open()
    {
@@ -29,8 +23,6 @@ public class MatchMenuManager : MonoBehaviour
    public void Close()
    {
      matchClient.Disconnect();
-     matchMenuObject.SetActive(false); 
-    //matchMakingMenuObject.SetActive(false); 
-    
+     matchMenuObject.SetActive(false);     
    }
 }
