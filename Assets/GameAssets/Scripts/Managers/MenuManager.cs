@@ -12,44 +12,95 @@ public class MenuManager : MonoBehaviour
     public Client client; 
 
     //[SerializeField] private TMP_InputField adressInput; 
+    public Button loginButton;
+    public Button signUpMenuButton;
+    public Button signUpButton;
+    public Button backSignUpMenuButton; 
     public Button startLocalGameButton;
-    public Button onlineGameButton;
+    public Button findMatchButton;
     public Button hostGameButton;
+    public Button backButtonMatchMakingMenu;
     public Button connectGame; 
     public Button backButtonOnlineGameMenu;
     public Button backButtonHostGameMenu;
     public Button backButtonToMainMenu;
+
+    public TMP_InputField  loginUserNameInputField;
+    public TMP_InputField  loginPasswordInputField;
+    public TMP_Text  loginErrorText;
+
+    public TMP_InputField  signUpUserNameInputField;
+    public TMP_InputField  signUpPasswordInputField;
+    public TMP_Text  signUpErrorText;
+    
     public TextMeshProUGUI resultText;
     public TextMeshProUGUI manaText;
     public TextMeshProUGUI turnText;
  
 
+    //public LoginManager loginManager;
+    //public SignUpManager signUpManager;
+
+    public GameObject loginMenuObject;
+    public GameObject signUpMenuObject;
     public GameObject mainMenuObject;
+    public GameObject matchMakingMenuObject;
     public GameObject onlineMenuObject;
     public GameObject hostMenuObject;
     public GameObject matchMenuObject; 
     public GameObject resultMenuObject; 
 
+    //public MatchMakingManager matchMakingManager; 
+
     private int playerCount = -1;
     private int currentTeam = -1;
 
 
-
+/*
     private void Awake()
     {
         RegisterToEvent();
     }
-
+*/
 
 
     void Start()
-    {
+    {}
+        /*
+        if(loginButton != null)
+        {
+            loginButton.onClick.AddListener(OnLoginButtonClick); 
+        }
+
+        if(signUpMenuButton != null )
+        {
+            signUpMenuButton.onClick.AddListener(OnSignUpMenuButtonClick); 
+        }
+
+        if(signUpButton != null )
+        {
+            signUpButton.onClick.AddListener(OnSignUpButtonClick); 
+        }
+
+        if(backSignUpMenuButton != null )
+        {
+            backSignUpMenuButton.onClick.AddListener(OnBackSignUpMenuButtonClick); 
+        }
+
+
 
         if(startLocalGameButton != null){
             startLocalGameButton.onClick.AddListener(OnLocalGameButtonClick);
+        }*/
+/*
+        if(findMatchButton != null){
+            findMatchButton.onClick.AddListener(OnFindMatchButtonClick);
+
+            
         }
-        if(onlineGameButton != null){
-            onlineGameButton.onClick.AddListener(OnOnlineGameButtonClick);
+
+        if(backButtonMatchMakingMenu != null){
+            backButtonMatchMakingMenu.onClick.AddListener(OnBackButtonMatchMakingMenuClick);
 
             
         }
@@ -78,17 +129,96 @@ public class MenuManager : MonoBehaviour
         }
 
 
+    }*/
+  /*
+    void OnLoginButtonClick()
+    {
+      
+        loginManager.OnResponse += OnLoginResponse;
+        Debug.Log(loginUserNameInputField.text);
+        Debug.Log(loginPasswordInputField.text);
+        loginManager.OnLoginClick(loginUserNameInputField.text, loginPasswordInputField.text);
+      
+    }
+  */
+    /*
+    void OnLoginResponse(string token, bool isSuccess){
+       if(isSuccess)
+       {
+        loginMenuObject.SetActive(false);
+        mainMenuObject.SetActive(true); 
+       }
+       else{
+        loginErrorText.text = "Invalid username or password"; 
+       } 
     }
 
-    // Update is called once per frame
+    void OnSignUpMenuButtonClick()
+    {
+        loginMenuObject.SetActive(false);
+        signUpMenuObject.SetActive(true); 
+    }
+
+    void OnSignUpButtonClick()
+    {
+        Debug.Log("Sign Up Click");
+        signUpManager.OnResponse += OnSignUpResponse;
+
+        signUpManager.OnSignUp(signUpUserNameInputField.text, signUpPasswordInputField.text);
+    }
+
+    void OnSignUpResponse(string token, bool isSuccess){
+       if(isSuccess)
+       {
+        Debug.Log("Sign Up Success");
+        signUpMenuObject.SetActive(false);
+        loginMenuObject.SetActive(true); 
+       }
+       else{
+        signUpErrorText.text = "Invalid username or password"; 
+       } 
+    }
+
+
+    void OnBackSignUpMenuButtonClick()
+    {
+        signUpMenuObject.SetActive(false);
+        loginMenuObject.SetActive(true);
+    
+    }
+    */
+
+/*
     void OnLocalGameButtonClick(){
         mainMenuObject.SetActive(false); 
     }
 
-     void OnOnlineGameButtonClick(){
+     void OnFindMatchButtonClick(){
          mainMenuObject.SetActive(false);
-         onlineMenuObject.SetActive(true); 
+         matchMakingMenuObject.SetActive(true);
+
+
+         matchMakingManager.OnMessageArrived += OnMessageArrivedFromMatchMaking; 
+         matchMakingManager.MakeConnection(); 
     }
+
+    void OnMessageArrivedFromMatchMaking(string type, string match_id)
+    {
+        if(type == "waiting_match")
+        {
+            Debug.Log("match searching");
+        }
+
+    }
+
+    void OnBackButtonMatchMakingMenuClick()
+    {
+        matchMakingManager.OnMessageArrived -= OnMessageArrivedFromMatchMaking;
+        matchMakingManager.OnApplicationQuit();
+        matchMakingMenuObject.SetActive(false);
+        mainMenuObject.SetActive(true);
+    }
+*/
 
     void OnHostButtonClick(){
          onlineMenuObject.SetActive(false);
@@ -188,4 +318,5 @@ public class MenuManager : MonoBehaviour
     {
         manaText.text = "Mana: " + currentMana + "/" + totalMana;
     }
+    
 }

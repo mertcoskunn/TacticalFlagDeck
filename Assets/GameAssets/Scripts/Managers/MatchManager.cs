@@ -16,7 +16,7 @@ public class MatchManager : MonoBehaviour
 
     private void Awake()
     {
-        RegisterToEvent(); 
+        //RegisterToEvent(); 
     }
     
     private void RegisterToEvent()
