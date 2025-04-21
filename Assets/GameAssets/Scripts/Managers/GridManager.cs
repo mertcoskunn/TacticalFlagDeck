@@ -43,7 +43,6 @@ public class GridManager : MonoBehaviour, IGridManager
     private List<GridCell> enemyGrids = new List<GridCell>();
     private List<GridCell> higlightedGrids = new List<GridCell>(); 
     
-    private int currentTeam = -1;
     private int spawnRange = 2; 
     
     private bool isAnimRunning = false;
@@ -76,7 +75,7 @@ public class GridManager : MonoBehaviour, IGridManager
         {
             matchEnd = false; 
             SetLocked(true); 
-            OnMatchEnd?.Invoke(currentTeam);
+            OnMatchEnd?.Invoke(GameManager.Instance.CurrentTeam);
             return;  
             
         }
@@ -96,7 +95,7 @@ public class GridManager : MonoBehaviour, IGridManager
                     {
                         if ((hoveredCell != null) && (hoveredCell.objectInCell != null) && (hoveredCell.objectInCell.GetComponent<GameCharacter>() != null))
                         {
-                                if(hoveredCell.objectInCell.GetComponent<GameCharacter>().GetTeam() == currentTeam)
+                                if(hoveredCell.objectInCell.GetComponent<GameCharacter>().GetTeam() == GameManager.Instance.CurrentTeam)
                                 {
                                     selectedCell = hoveredCell;
                                     DeactivateHoveredCell();
@@ -220,12 +219,12 @@ public class GridManager : MonoBehaviour, IGridManager
                 GameObject gridCell = Instantiate(gridCellPrefab, spawnPosition, Quaternion.identity);
 
                 gridCell.transform.SetParent(transform);
-                if (currentTeam == 0)
+                if (GameManager.Instance.CurrentTeam == 0)
                 {
                     gridCell.GetComponent<GridCell>().gridIndex = new Vector2(x, y);
                     gridCells[x, y] = gridCell;
                 }
-                else if (currentTeam == 1)
+                else if (GameManager.Instance.CurrentTeam == 1)
                 {
                     gridCell.GetComponent<GridCell>().gridIndex = new Vector2(width - x - 1, y);
                     gridCells[width - x - 1, y] = gridCell;
@@ -253,8 +252,8 @@ public class GridManager : MonoBehaviour, IGridManager
                 newObj.transform.SetParent(transform);
                 gridObjects.Add(newObj);
                 cell.SetObjectToCell(newObj);
-                if(team == currentTeam)
-                    OnAddObjectToGrid?.Invoke(currentTeam, cardData.GetCardIndex(), gridPosition);
+                if(team == GameManager.Instance.CurrentTeam)
+                    OnAddObjectToGrid?.Invoke(GameManager.Instance.CurrentTeam, cardData.GetCardIndex(), gridPosition);
                 return true;
             }
         }
@@ -307,7 +306,7 @@ public class GridManager : MonoBehaviour, IGridManager
         else
         {
             int targetX; 
-            if(currentTeam == 0)
+            if(GameManager.Instance.CurrentTeam == 0)
             {
                 targetX = (int)(width-targetCell.gridIndex.x-1);
 
@@ -480,7 +479,7 @@ public class GridManager : MonoBehaviour, IGridManager
             {
                 GridCell cell = gridCells[tempX, (int)selectedCell.gridIndex.y].GetComponent<GridCell>();
                 if(cell.cellFull && cell.objectInCell.GetComponent<GameCharacter>() != null){
-                    if(cell.objectInCell.GetComponent<GameCharacter>().GetTeam() != currentTeam)
+                    if(cell.objectInCell.GetComponent<GameCharacter>().GetTeam() != GameManager.Instance.CurrentTeam)
                     {
                     cell.SetHighlight(true, ColorCode.ENEMY);
                     enemyGrids.Add(cell);
@@ -496,7 +495,7 @@ public class GridManager : MonoBehaviour, IGridManager
                 GridCell cell = gridCells[tempX, (int)selectedCell.gridIndex.y].GetComponent<GridCell>();
                 if(cell.cellFull && cell.objectInCell.GetComponent<GameCharacter>() != null)
                 {
-                    if(cell.objectInCell.GetComponent<GameCharacter>().GetTeam() != currentTeam)
+                    if(cell.objectInCell.GetComponent<GameCharacter>().GetTeam() != GameManager.Instance.CurrentTeam)
                     {
                         cell.SetHighlight(true, ColorCode.ENEMY);
                         enemyGrids.Add(cell);
@@ -512,7 +511,7 @@ public class GridManager : MonoBehaviour, IGridManager
             {
                 GridCell cell =  gridCells[(int)selectedCell.gridIndex.x, tempY].GetComponent<GridCell>();
                 if(cell.cellFull && cell.objectInCell.GetComponent<GameCharacter>() != null){
-                    if(cell.objectInCell.GetComponent<GameCharacter>().GetTeam() != currentTeam)
+                    if(cell.objectInCell.GetComponent<GameCharacter>().GetTeam() != GameManager.Instance.CurrentTeam)
                     {
                     cell.SetHighlight(true, ColorCode.ENEMY);
                     enemyGrids.Add(cell);
@@ -528,7 +527,7 @@ public class GridManager : MonoBehaviour, IGridManager
             {
                 GridCell cell = gridCells[(int)selectedCell.gridIndex.x, tempY].GetComponent<GridCell>();
                 if(cell.cellFull && cell.objectInCell.GetComponent<GameCharacter>() != null){
-                 if(cell.objectInCell.GetComponent<GameCharacter>().GetTeam() != currentTeam)
+                 if(cell.objectInCell.GetComponent<GameCharacter>().GetTeam() != GameManager.Instance.CurrentTeam)
                 {
                     cell.SetHighlight(true, ColorCode.ENEMY);
                     enemyGrids.Add(cell);
@@ -541,7 +540,7 @@ public class GridManager : MonoBehaviour, IGridManager
 
     public void HighlightSpawnArea()
     {
-        if(currentTeam == 0)
+        if(GameManager.Instance.CurrentTeam == 0)
         {
             for(int w = 0; w<spawnRange;w++)
             {
@@ -589,7 +588,7 @@ public class GridManager : MonoBehaviour, IGridManager
             if(hoveredCell.objectInCell != null )
              {
                
-                if(hoveredCell.objectInCell.GetComponent<GameCharacter>().GetTeam() == currentTeam)
+                if(hoveredCell.objectInCell.GetComponent<GameCharacter>().GetTeam() == GameManager.Instance.CurrentTeam)
                 {
                     hoveredCell.SetHighlight(false);
                     hoveredCell = cell; 
@@ -666,7 +665,6 @@ public class GridManager : MonoBehaviour, IGridManager
 
     public void Init(int currentTeam)
     {   
-        SetCurrentTeam(currentTeam); 
         CreateGrid();
         CreateFlag(); 
 
@@ -675,8 +673,6 @@ public class GridManager : MonoBehaviour, IGridManager
 
     public void Reset()
     {
-        SetCurrentTeam(-1);
-        
         for (int i = 0; i < gridCells.GetLength(0); i++)
         {
             for (int j = 0; j < gridCells.GetLength(1); j++)
@@ -704,15 +700,6 @@ public class GridManager : MonoBehaviour, IGridManager
         higlightedGrids.Clear();
     }
 
-
-    public void SetCurrentTeam(int val)
-    {
-        currentTeam = val;
-    }
-    public int GetCurrentTeam()
-    {
-        return currentTeam;
-    }
     public void SetCurrentState(int val)
     {
         currentState = val; 
