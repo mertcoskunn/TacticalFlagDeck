@@ -24,7 +24,7 @@ public class MatchClient : MonoBehaviour
     public event Action<MoveMessage> OnMove;
     public event Action<AttackMessage> OnAttack;
     public event Action<TurnEndMessage> OnTurnEnd;
-    public event Action<string, string> OnMatchEnd;
+    public event Action<MatchEndMessage> OnMatchEnd;
 
     async public void TryConnect()
     {
@@ -93,13 +93,16 @@ public class MatchClient : MonoBehaviour
 
                 }
 
-
-
                 if(message.type == "TURN_END")
                 {
                     TurnEndMessage msg = JsonUtility.FromJson<TurnEndMessage>(jsonMessage);
                     OnTurnEnd?.Invoke(msg); 
+                }
 
+                if(message.type == "MATCH_END")
+                {
+                    MatchEndMessage msg = JsonUtility.FromJson<MatchEndMessage>(jsonMessage);
+                    OnMatchEnd?.Invoke(msg); 
                 }
             }
             catch (Exception ex)
