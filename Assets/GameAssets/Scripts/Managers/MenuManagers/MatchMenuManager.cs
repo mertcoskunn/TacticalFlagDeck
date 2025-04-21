@@ -29,9 +29,9 @@ public class MatchMenuManager : MonoBehaviour
      matchMenuObject.SetActive(false);     
    }
 
-   public void SetManaText(string text)
+   public void SetManaText(int currentMana, int totalMana)
    {
-     manaText.text = text;
+     manaText.text = "Mana: " + currentMana + "/" + totalMana;
    }
    public void SetTurnText(string text)
    {

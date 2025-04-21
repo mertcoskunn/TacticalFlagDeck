@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 public class MatchManager : MonoBehaviour
 {
@@ -8,8 +7,8 @@ public class MatchManager : MonoBehaviour
     [SerializeField] private HandManager handManager;
     [SerializeField] private MatchClient matchClient;
 
-    
-
+    [SerializeField] private MatchMenuManager matchMenuManager;
+    [SerializeField] private EndMatchMenuManager endMatchMenuManager;
 
     private int manaPerTurn = 3; 
     private int currentMana = 3;   
@@ -47,13 +46,13 @@ public class MatchManager : MonoBehaviour
             deckManager.Init(5);            
             handManager.SetLockedCardsInHand(false);
             gridManager.SetLocked(false);
-            //menuManager.UpdateTurnText("Your Turn");
+            matchMenuManager.SetTurnText("Your Turn");
         }
         else
         {
             deckManager.Init(4);
             handManager.SetLockedCardsInHand(true);
-            //menuManager.UpdateTurnText("Enemy Turn"); 
+            matchMenuManager.SetTurnText("Enemy Turn"); 
         }
     }
 
@@ -98,13 +97,13 @@ public class MatchManager : MonoBehaviour
         
         if(msg.currentTeam != GameManager.Instance.CurrentTeam)
         {
-           //menuManager.OpenResultMenu("Failed");
-           Debug.Log("Failed"); 
+           matchMenuManager.Close();
+           endMatchMenuManager.Open("Failed");
         }
         else
         {
-            Debug.Log("Victory");
-            //menuManager.OpenResultMenu("Victory");
+            matchMenuManager.Close();
+            endMatchMenuManager.Open("Victory");
         }    
     }
     public void HandleObjectAddedToGrid(int currentTeam, int cardIndex, Vector2 gridPoisition)
@@ -128,12 +127,12 @@ public class MatchManager : MonoBehaviour
     public void SetMana(int val)
     {
         currentMana = val;
-        //menuManager.UpdateManaText(currentMana, manaPerTurn); 
+        matchMenuManager.SetManaText(currentMana, manaPerTurn); 
     }
     public void UpdateMana(int deltaMana)
     {
         SetMana(currentMana + deltaMana); 
-        //menuManager.UpdateManaText(currentMana, manaPerTurn);
+        matchMenuManager.SetManaText(currentMana, manaPerTurn);
         if(currentMana <= 0)
         {
             OnPlayerTurnEnd(GameManager.Instance.CurrentTeam);
@@ -145,7 +144,7 @@ public class MatchManager : MonoBehaviour
         handManager.SetLockedCardsInHand(true);
         gridManager.SetLocked(true); 
         
-        //menuManager.UpdateTurnText("Enemy Turn");
+        matchMenuManager.SetTurnText("Enemy Turn");
         
         TurnEndMessage nw = new TurnEndMessage(GameManager.Instance.AuthToken, GameManager.Instance.MatchID, GameManager.Instance.CurrentTeam);
         matchClient.SendMessageToServer(nw);
@@ -154,7 +153,7 @@ public class MatchManager : MonoBehaviour
     public void OnPlayerTurnStart()
     {
         SetMana(manaPerTurn);
-        //menuManager.UpdateTurnText("Your Turn"); 
+        matchMenuManager.SetTurnText("Your Turn"); 
         deckManager.DrawCard(handManager); 
         gridManager.SetLocked(false);
         handManager.SetLockedCardsInHand(false); 

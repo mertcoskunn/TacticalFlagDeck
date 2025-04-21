@@ -53,6 +53,8 @@ MonoBehaviour:
   matchMenuObject: {fileID: 290740442349553105}
   matchManager: {fileID: 0}
   matchClient: {fileID: 0}
+  manaText: {fileID: 8999958627685467292}
+  turnText: {fileID: 2446774854410432779}
 --- !u!1 &1104768192977669031
 GameObject:
   m_ObjectHideFlags: 0
