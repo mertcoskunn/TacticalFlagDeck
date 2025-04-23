@@ -971,7 +971,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selfObject: {fileID: 5597465911157796630}
   selectScale: 1.1
-  cardPlay: {x: -400, y: 450}
+  cardPlay: {x: -400, y: 200}
   playPosition: {x: -730, y: 500, z: 0}
   glowEffect: {fileID: 993318514887931337}
   playArrow: {fileID: 2810321575950621441}

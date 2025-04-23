@@ -28,6 +28,9 @@ public class GridManager : MonoBehaviour, IGridManager
     public CardDataBase cardDB;
     public GameObject flagPrefab;
 
+    
+    //public GameObject gridCenterPosObject;
+
     private GameObject flag; 
 
 
@@ -53,11 +56,11 @@ public class GridManager : MonoBehaviour, IGridManager
     public event Action<Vector2, Vector2> OnAttack;
     public event Action<int> OnMatchEnd;
 
-
     private bool matchEnd = false; 
     
     void Start()
     {
+        //CreateGrid();
         //Init(0);
         //GameStart(0);
         RegisterToEvent();
@@ -205,9 +208,12 @@ public class GridManager : MonoBehaviour, IGridManager
     
     public void CreateGrid()
     {
+        
         gridCells = new GameObject[width, height];
         Vector2 centerOffset = new Vector2(width / 2.0f - 0.5f, height / 2.0f - 0.5f);
-
+        //Vector2 centerOffset = new Vector2(gridPos.transform.position.x, gridPos.transform.position.x);
+        //Vector2 worldCenterPosition = gridCenterPosObject.transform.position;
+        
         centerOffset.y -= selfObject.transform.position.y;
 
         for (int x = 0; x < width; x++)
@@ -216,6 +222,7 @@ public class GridManager : MonoBehaviour, IGridManager
             {
                 Vector2 gridPosition = new Vector2(x, y);
                 Vector2 spawnPosition = gridPosition - centerOffset;
+                //Vector2 spawnPosition = worldCenterPosition + (gridPosition - centerOffset);
                 GameObject gridCell = Instantiate(gridCellPrefab, spawnPosition, Quaternion.identity);
 
                 gridCell.transform.SetParent(transform);
@@ -236,6 +243,7 @@ public class GridManager : MonoBehaviour, IGridManager
 
             }
         }
+        
     }
     public bool AddObjectToGrid(int cardIndex, Vector2 gridPosition, int team)
     {
