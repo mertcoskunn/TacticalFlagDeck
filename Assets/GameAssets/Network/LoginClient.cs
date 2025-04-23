@@ -25,10 +25,31 @@ public class AuthResultData
 public class LoginClient : MonoBehaviour
 {
 
-    private string authenticationEndPoint = "http://localhost:13756/signin";
+    //private string authenticationEndPoint = "http://localhost:13756/signin";
+    private string authenticationEndPoint;
 
+    
     public event Action<string, bool> OnResponse;
    
+    void Awake()
+    {
+    #if UNITY_WEBGL && !UNITY_EDITOR
+            string host = Application.absoluteURL;
+
+            if (host.Contains("localhost"))
+            {
+                authenticationEndPoint = "http://localhost:13756/signin";
+            }
+            else
+            {
+                authenticationEndPoint = "https://web-authserver.up.railway.app/signin";
+            }
+    #else
+            authenticationEndPoint = "http://localhost:13756/signin";
+    #endif
+
+            Debug.Log("Auth endpoint: " + authenticationEndPoint);
+    }
     public void OnTryLogin(string username, string password)
     {
         StartCoroutine(TryLogin(username, password));

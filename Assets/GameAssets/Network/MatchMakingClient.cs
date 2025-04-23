@@ -18,7 +18,24 @@ public class MatchMakingClient : MonoBehaviour
 
     async public void TryConnect()
     {
-        websocket = new WebSocket("ws://localhost:3000");
+
+        //string endPoint = "ws://localhost:3000";
+        string endPoint ;
+#if UNITY_WEBGL && !UNITY_EDITOR
+    string host = Application.absoluteURL;
+
+    if (host.Contains("localhost"))
+    {
+        endPoint = "ws://localhost:3000";
+    }
+    else
+    {
+        endPoint = "wss://web-matchmakingserver.up.railway.app";
+    }
+#else
+    endPoint = "ws://localhost:3000";
+#endif    
+        websocket = new WebSocket(endPoint);
 
         websocket.OnOpen += () =>
         {

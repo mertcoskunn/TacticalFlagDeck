@@ -19,11 +19,32 @@ public class SignUpAutResultData
 
 public class SignUpClient : MonoBehaviour
 {
+ 
+    //string authenticationEndPoint = "http://127.0.0.1:13756/signup";
+    private string authenticationEndPoint;
 
-    private string authenticationEndPoint = "http://127.0.0.1:13756/signup";
-    
+
     public event Action<string, bool> OnResponse;
     
+    void Awake()
+    {
+        #if UNITY_WEBGL && !UNITY_EDITOR
+                string host = Application.absoluteURL;
+
+                if (host.Contains("localhost"))
+                {
+                    authenticationEndPoint = "http://localhost:13756/signup";
+                }
+                else
+                {
+                    authenticationEndPoint = "https://web-authserver.up.railway.app/signup";
+                }
+        #else
+                authenticationEndPoint = "http://localhost:13756/signup";
+        #endif
+
+                Debug.Log("Auth endpoint: " + authenticationEndPoint);
+    }
     public void OnTrySignUp(string username, string password)
     {
         StartCoroutine(TrySignUp(username, password));
