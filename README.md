@@ -5,10 +5,10 @@ Although the present version runs on PC, my goal is to make it playable through 
 
 ## To Do
 
-- [ ] Extract the server module from the main build and deploy it to a public hosting environment
-- [ ] Add a game lobby system for multiplayer sessions  
+- [x] Extract the server module from the main build and deploy it to a public hosting environment
+- [x] Add a game lobby system for multiplayer sessions  
 - [ ] Add AI system for single-player mode
-- [ ] Implement web-based deployment
+- [x] Implement web-based deployment
 - [ ] Improve game design and increase card variety
 - [ ] Update models and animations
 - [ ] Improve game UI
