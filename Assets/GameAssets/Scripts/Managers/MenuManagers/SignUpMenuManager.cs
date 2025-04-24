@@ -21,14 +21,27 @@ public class SignUpMenuManager : MonoBehaviour
     {
         if(signUpButton != null)
         {
-            signUpButton.onClick.AddListener(OnSignUpButtonClick); 
+            signUpButton.onClick.AddListener(OnSignUpButtonClick);
+            signUpButton.interactable = false;  
         }
 
         if(backSignUpMenuButton != null )
         {
             backSignUpMenuButton.onClick.AddListener(OnBackSignUpMenuButton); 
         }
+
+        signUpUserNameInputField.onValueChanged.AddListener(delegate { OnInputValueChanged(); });
+        signUpPasswordInputField.onValueChanged.AddListener(delegate { OnInputValueChanged(); });
     }
+
+
+    void OnInputValueChanged()
+    {
+        bool usernameNotEmpty = !string.IsNullOrWhiteSpace(signUpUserNameInputField.text);
+        bool passwordNotEmpty = !string.IsNullOrWhiteSpace(signUpPasswordInputField.text);
+
+        signUpButton.interactable = usernameNotEmpty && passwordNotEmpty;
+    }  
 
 
     void OnSignUpButtonClick()

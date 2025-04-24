@@ -25,16 +25,28 @@ public class LoginMenuManager : MonoBehaviour
     {
         if(loginButton != null)
         {
-            loginButton.onClick.AddListener(OnLoginButtonClick); 
+            loginButton.onClick.AddListener(OnLoginButtonClick);
+            loginButton.interactable = false; 
         }
 
         if(signUpMenuButton != null )
         {
             signUpMenuButton.onClick.AddListener(OnSignUpMenuButtonClick); 
         }
+
+
+        loginUserNameInputField.onValueChanged.AddListener(delegate { OnInputValueChanged(); });
+        loginPasswordInputField.onValueChanged.AddListener(delegate { OnInputValueChanged(); });
     }
 
 
+    void OnInputValueChanged()
+    {
+        bool usernameNotEmpty = !string.IsNullOrWhiteSpace(loginUserNameInputField.text);
+        bool passwordNotEmpty = !string.IsNullOrWhiteSpace(loginPasswordInputField.text);
+
+        loginButton.interactable = usernameNotEmpty && passwordNotEmpty;
+    }   
 
     void OnLoginButtonClick()
     {

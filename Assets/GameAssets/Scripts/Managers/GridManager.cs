@@ -55,7 +55,6 @@ public class GridManager : MonoBehaviour, IGridManager
     public event Action<Vector2, Vector2> OnMakeMove;
     public event Action<Vector2, Vector2> OnAttack;
     public event Action<int> OnMatchEnd;
-
     private bool matchEnd = false; 
     
     void Start()
@@ -206,6 +205,7 @@ public class GridManager : MonoBehaviour, IGridManager
         }
     }
     
+    
     public void CreateGrid()
     {
         
@@ -215,6 +215,9 @@ public class GridManager : MonoBehaviour, IGridManager
         //Vector2 worldCenterPosition = gridCenterPosObject.transform.position;
         
         centerOffset.y -= selfObject.transform.position.y;
+        Debug.Log(selfObject.transform.position.y);
+        Debug.Log(centerOffset); 
+
 
         for (int x = 0; x < width; x++)
         {
@@ -245,6 +248,11 @@ public class GridManager : MonoBehaviour, IGridManager
         }
         
     }
+    
+
+    
+   
+   
     public bool AddObjectToGrid(int cardIndex, Vector2 gridPosition, int team)
     {
         CardCreature cardData = cardDB.GetCardByIndex(cardIndex) as CardCreature;
@@ -262,6 +270,8 @@ public class GridManager : MonoBehaviour, IGridManager
                 cell.SetObjectToCell(newObj);
                 if(team == GameManager.Instance.CurrentTeam)
                     OnAddObjectToGrid?.Invoke(GameManager.Instance.CurrentTeam, cardData.GetCardIndex(), gridPosition);
+                else
+                    newObj.transform.Find("SpriteObject").GetComponent<SpriteRenderer>().flipX = true;
                 return true;
             }
         }
