@@ -4,7 +4,7 @@ This project is aiming to be a multiplayer, card-based strategy game. Right now,
 
 ## How to Play and Test
 
-You can test the game using this [link](web-production-1f9a9.up.railway.app). Just open it in two tabs or in two different browsers. The goal of the game is to grab the diamond in the middle and bring it to the rightmost column. Not the best game mechanic out there, but it works for testing!
+You can test the game using this [link](https://web-production-1f9a9.up.railway.app). Just open it in two tabs or in two different browsers. The goal of the game is to grab the diamond in the middle and bring it to the rightmost column. Not the best game mechanic out there, but it works for testing!
 
 <img src="imgs/Screenshot.png" alt="Game Screenshot" width="500"/>
 
